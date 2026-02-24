@@ -1,5 +1,5 @@
 function Home() {
-  return <h1>Isso é uma demonstração de deploy para a Kenia</h1>;
+  return <h1>Página de teste de CI - Continuous Integration</h1>;
 }
 
 export default Home;
