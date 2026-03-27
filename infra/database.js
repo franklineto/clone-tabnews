@@ -36,6 +36,7 @@ async function getNewClient() {
   await client.connect();
   return client;
 }
+//isso é um comentario
 
 export default {
   query,
