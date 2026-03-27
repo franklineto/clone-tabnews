@@ -13,7 +13,6 @@ test("POST to /api/v1/migrations should return 200", async () => {
   expect(response1.status).toBe(201);
 
   const response1Body = await response1.json();
-  //console.log(responseBody);
 
   expect(Array.isArray(response1Body)).toBe(true);
   expect(response1Body.length).toBeGreaterThan(0);
