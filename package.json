@@ -16,7 +16,6 @@
     "test:watch": "jest --watchAll --runInBand",
     "migration:create": "node-pg-migrate --migrations-dir infra/migrations create",
     "migration:up": "node-pg-migrate --migrations-dir infra/migrations --envPath .env.development up",
-
     "prepare": "husky",
     "commit": "cz"
   },
