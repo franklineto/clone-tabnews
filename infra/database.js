@@ -15,7 +15,7 @@ async function query(queryObject) {
 }
 
 function getSSLValues() {
-  if(process.env.POSTGRES_CA) {
+  if (process.env.POSTGRES_CA) {
     return {
       ca: process.env.POSTGRES_CA,
     };
@@ -36,7 +36,6 @@ async function getNewClient() {
   await client.connect();
   return client;
 }
-//isso é um comentario
 
 export default {
   query,
