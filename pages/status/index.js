@@ -1,8 +1,9 @@
 import useSWR from "swr";
 
-const url = process.env.NODE_ENV === "development"
-      ? "/proxy/3000/api/v1/status"
-      : "/api/v1/status"
+const url =
+  process.env.NODE_ENV === "development"
+    ? "/proxy/3000/api/v1/status"
+    : "/api/v1/status";
 
 async function fetchAPI(key) {
   const response = await fetch(key);
@@ -22,38 +23,40 @@ export default function StatusPage() {
   );
 }
 
-function UpdatedAt(){
-  const {isLoading, data} = useSWR(url, fetchAPI, {
+function UpdatedAt() {
+  const { isLoading, data } = useSWR(url, fetchAPI, {
     refreshInterval: 2000,
     //dedupingInterval: 500,
   });
 
-  let UpdatedAtText = "Carregando..."
+  let UpdatedAtText = "Carregando...";
 
-  if (!isLoading && data){
-    UpdatedAtText = new Date(data.updated_at).toLocaleString('pt-BR');
+  if (!isLoading && data) {
+    UpdatedAtText = new Date(data.updated_at).toLocaleString("pt-BR");
   }
-  return <div>Ultima atualização: {UpdatedAtText}</div>
+  return <div>Ultima atualização: {UpdatedAtText}</div>;
 }
 
-function DatabaseStatus(){
-  const {isLoading, data} = useSWR(url, fetchAPI, {
+function DatabaseStatus() {
+  const { isLoading, data } = useSWR(url, fetchAPI, {
     refreshInterval: 2000,
     //dedupingInterval: 500,
   });
 
-  let Version =  "Carregando..."
-  let MaxConnections =  "Carregando..."
-  let OpennedConnections =  "Carregando..."
+  let Version = "Carregando...";
+  let MaxConnections = "Carregando...";
+  let OpennedConnections = "Carregando...";
 
-  if (!isLoading && data){
+  if (!isLoading && data) {
     Version = data.dependencies.database.version;
     MaxConnections = data.dependencies.database.max_connections;
-    OpennedConnections =  data.dependencies.database.opened_connections
+    OpennedConnections = data.dependencies.database.opened_connections;
   }
-  return <>
-          <div>Versão: {Version}</div>
-          <div>Máximo Conexões Simultâneas: {MaxConnections}</div>
-          <div>Conexões Abertas: {OpennedConnections}</div>
-          </>
+  return (
+    <>
+      <div>Versão: {Version}</div>
+      <div>Máximo Conexões Simultâneas: {MaxConnections}</div>
+      <div>Conexões Abertas: {OpennedConnections}</div>
+    </>
+  );
 }
