@@ -8,7 +8,7 @@ const url =
 async function fetchAPI(key) {
   const response = await fetch(key);
   const responseBody = await response.json();
-  return responseBody; 
+  return responseBody;
 }
 
 export default function StatusPage() {
@@ -31,10 +31,12 @@ function UpdatedAt() {
   if (!isLoading && data) {
     UpdatedAtText = new Date(data.updated_at).toLocaleString("pt-BR");
   }
-  return <> 
+  return (
+    <>
       <h1>Status</h1>
       <div>Ultima atualização: {UpdatedAtText}</div>
     </>
+  );
 }
 
 function DatabaseStatus() {
@@ -45,11 +47,16 @@ function DatabaseStatus() {
   if (!isLoading && data) {
     databaseStatusInformation = (
       <>
-      <div>Versão: {data.dependencies.database.version}</div>
-      <div>Conexões Abertas: {data.dependencies.database.opened_connections}</div>
-      <div>Máximo Conexões Simultâneas: {data.dependencies.database.max_connections}</div>
-    </>
-    )
+        <div>Versão: {data.dependencies.database.version}</div>
+        <div>
+          Conexões Abertas: {data.dependencies.database.opened_connections}
+        </div>
+        <div>
+          Máximo Conexões Simultâneas:{" "}
+          {data.dependencies.database.max_connections}
+        </div>
+      </>
+    );
   }
   return (
     <>
