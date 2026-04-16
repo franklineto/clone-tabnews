@@ -1,3 +1,13 @@
+// tests/integration/api/v1/users/patch.test.js
+// TESTE DE INTEGRAÇÃO: Edição de Pessoas (PATCH /api/users/:id)
+// Testa todos os cenários de atualização:
+//   - Retornar 404 para ID inexistente
+
+//   - Atualizar campos de PF com sucesso
+//   - Atualizar campos de PJ com sucesso
+//   - Atualizar apenas alguns campos (parcial)
+//   - Rejeitar dados inválidos
+
 import { version as uuidVersion } from "uuid";
 import orchestrator from "tests/orchestrator.js";
 import user from "models/user.js";
@@ -11,9 +21,12 @@ beforeAll(async () => {
 
 describe("PATCH /api/v1/users/[username]", () => {
   describe("Anonymous user", () => {
-    test("With nonexistent 'username'", async () => {
+    // ============================================================
+    // TESTES: PATCH - Casos de erro
+    // ============================================================
+    test("deve retornar 404 ao tentar atualizar uma pessoa inexistente", async () => {
       const response = await fetch(
-        "http://localhost:3000/api/v1/users/noncaseexistent",
+        "http://localhost:3000/api/v1/users/pessoaInexistente",
         {
           method: "PATCH",
         },
@@ -29,32 +42,14 @@ describe("PATCH /api/v1/users/[username]", () => {
       });
     });
 
-    test("With duplicated 'username'", async () => {
-      const user1Response = await fetch("http://localhost:3000/api/v1/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: "user1",
-          email: "user1@gmail.com",
-          password: "1234",
-        }),
+    test("deve retornar 400 ao tentar atualizar um username para um já existente", async () => {
+      await orchestrator.createUser({
+        username: "user1",
       });
-      expect(user1Response.status).toBe(201);
 
-      const user2Response = await fetch("http://localhost:3000/api/v1/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: "user2",
-          email: "user2@gmail.com",
-          password: "1234",
-        }),
+      await orchestrator.createUser({
+        username: "user2",
       });
-      expect(user2Response.status).toBe(201);
 
       const response = await fetch("http://localhost:3000/api/v1/users/user2", {
         method: "PATCH",
@@ -76,35 +71,16 @@ describe("PATCH /api/v1/users/[username]", () => {
       });
     });
 
-    test("With duplicated 'email'", async () => {
-      const email1Response = await fetch("http://localhost:3000/api/v1/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: "email1",
-          email: "email1@gmail.com",
-          password: "1234",
-        }),
+    test("deve retornar 400 ao tentar atualizar um email para um já existente", async () => {
+      await orchestrator.createUser({
+        email: "email1@gmail.com",
       });
-      expect(email1Response.status).toBe(201);
-
-      const email2Response = await fetch("http://localhost:3000/api/v1/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: "email2",
-          email: "email2@gmail.com",
-          password: "1234",
-        }),
+      const createdUser2 = await orchestrator.createUser({
+        email: "email2@gmail.com",
       });
-      expect(email2Response.status).toBe(201);
 
       const response = await fetch(
-        "http://localhost:3000/api/v1/users/email2",
+        `http://localhost:3000/api/v1/users/${createdUser2.username}`,
         {
           method: "PATCH",
           headers: {
@@ -259,7 +235,7 @@ describe("PATCH /api/v1/users/[username]", () => {
       expect(Date.parse(responseUpBody.updated_at)).not.toBeNaN();
 
       expect(responseUpBody.updated_at > responseUpBody.created_at).toBe(true);
-      console.log(responseUpBody);
+      //console.log(responseUpBody);
 
       const userInDatabase = await user.findOneByUsername("newPassword1");
       const correctPasswordMatch = await password.compare(
